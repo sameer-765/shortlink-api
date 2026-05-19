@@ -1,5 +1,0 @@
-{"timestamp_unix_ms":1778421858825,"level":"error","message":"command.failed","context":{"command":"report"}}
-Error: Report payload must be valid JSON
-
-Caused by:
-    key must be a string at line 1 column 2
