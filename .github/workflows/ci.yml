@@ -81,7 +81,7 @@ jobs:
             -H "X-API-Key: ci-prod-key-a-123" \
             -d '{"long_url":"https://example.com/smoke"}')
 
-          short_url=$(printf '%s' "$create_response" | python -c "import json,sys; print(json.load(sys.stdin)['short_url'])")
+          short_url=$(printf '%s' "$create_response" | python3 -c "import json,sys; print(json.load(sys.stdin)['short_url'])")
           redirect_status=$(curl -s -o /dev/null -w "%{http_code}" "http://127.0.0.1:8000${short_url}")
           [ "$redirect_status" = "302" ] || (echo "business smoke redirect failed" && exit 1)
 
