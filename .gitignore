@@ -37,3 +37,18 @@ Thumbs.db
 
 # Local editor state
 .cursorrules
+
+# Local UPSK / scratch artifacts
+upsk*.txt
+upsk*.json
+upsk*.db
+status*.txt
+status*.json
+report*.txt
+report*.json
+next_out.txt
+decide_out.txt
+diff.txt
+git_status.txt
+status_output.txt
+tmp-*
