@@ -27,7 +27,7 @@ jobs:
     defaults:
       run:
         shell: pwsh
-        working-directory: repo
+        working-directory: ${{ github.workspace }}/repo
 
     steps:
       - name: Check out repository
