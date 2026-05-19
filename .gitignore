@@ -1,11 +1,11 @@
 # Python virtual environments
-.venv/
-venv/
-ENV/
-env/
+**/.venv/
+**/venv/
+**/ENV/
+**/env/
 
 # Python bytecode
-__pycache__/
+**/__pycache__/
 *.py[cod]
 *$py.class
 
@@ -17,7 +17,7 @@ dist/
 pip-wheel-metadata/
 
 # Testing
-.pytest_cache/
+**/.pytest_cache/
 
 # Environment variables
 *.env
