@@ -1,0 +1,38 @@
+groups:
+  - name: api-production-readiness
+    rules:
+      - alert: ApiHighResidentMemory
+        expr: process_resident_memory_bytes > 2.5e+08
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "API resident memory is elevated"
+          description: "Resident memory has stayed above 250 MB for 10 minutes. Investigate slow leaks or unbounded in-memory growth."
+
+      - alert: ApiMemoryGrowth
+        expr: deriv(process_resident_memory_bytes[30m]) > 50000
+        for: 15m
+        labels:
+          severity: warning
+        annotations:
+          summary: "API memory is steadily climbing"
+          description: "Resident memory is increasing over a 30 minute window, which can indicate a slow memory leak before the service starts failing."
+
+      - alert: ApiRestartLoop
+        expr: changes(process_start_time_seconds[15m]) > 2
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "API is restarting repeatedly"
+          description: "The API process start time changed multiple times in 15 minutes. Investigate crash loops or unhealthy deploy behavior."
+
+      - alert: ApiSustainedHighLatency
+        expr: histogram_quantile(0.95, sum by (le) (rate(http_request_duration_seconds_bucket[10m]))) > 0.75
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: "API p95 latency is elevated"
+          description: "The 95th percentile request latency has stayed above 750 ms for 10 minutes. Check dependency saturation, memory pressure, or rollout regressions."

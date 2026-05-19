@@ -1,0 +1,118 @@
+﻿{
+  "nonce": "PpcClxE3KdyeL0_OsC4zA",
+  "events": [
+    {
+      "module": 4,
+      "step": "reflect",
+      "event_type": "module_evaluation",
+      "data": {
+        "narrative": "This module moved from observability design into real proof. You implemented hybrid structured logging, Prometheus metrics, and alert definitions, then used live smoke checks and a controlled failure route to prove what worked and to isolate a real cardinality bug in the failure-path metrics. What stood out most was the way you corrected misleading signals with runtime evidence instead of trusting assumptions.",
+        "overall": 4,
+        "dimension_scores": [
+          {
+            "key": "containerization_quality",
+            "score": 3,
+            "observation": "Containerization knowledge stayed stable in the background while you focused on observability work.",
+            "evidence": "Your work this module centered on logging, /metrics, and alerting rather than changing the Docker image or runtime container structure."
+          },
+          {
+            "key": "pipeline_design",
+            "score": 3,
+            "observation": "Pipeline thinking stayed competent but was not the main surface exercised in this module.",
+            "evidence": "You verified observability locally through live requests and metrics output rather than extending the CI/CD workflow itself."
+          },
+          {
+            "key": "observability_coverage",
+            "score": 4,
+            "observation": "You implemented all three observability pillars and proved them with real output, while also noticing the difference between metric existence and metric truthfulness.",
+            "evidence": "You reported that the live /metrics output included labeled http_requests_total and populated http_request_duration_seconds buckets, and you correctly noted that '0.0 is still just the placeholder value from URLS_TOTAL.set(0), not a real database-backed count yet.'"
+          },
+          {
+            "key": "failure_thinking",
+            "score": 4,
+            "observation": "You traced a subtle production-style bug from symptom to code path and explained why it would hurt only under failure conditions.",
+            "evidence": "You said, 'The likely bug is in the exception path using raw_route instead of the matched route template, so failed requests on dynamic URLs create unique metric labels while successful requests mostly use normalized route templates.'"
+          },
+          {
+            "key": "degradation_design",
+            "score": 3,
+            "observation": "You showed solid awareness of preserving all three observability pillars during a fix, though graceful degradation itself was not yet the focus of the module.",
+            "evidence": "You summarized the fix outcome as 'Logs still include structured request context, failure metrics still increment with normalized labels, and the error-rate alert math still works because status-code counting behavior did not change.'"
+          },
+          {
+            "key": "documentation_quality",
+            "score": 4,
+            "observation": "Your alert-definition proof was concise and complete, covering the parts an on-call engineer would need.",
+            "evidence": "You enumerated HighErrorRate, HighLatency, and ServiceDown with expression, threshold, for duration, severity, human-readable message, and runbook link."
+          }
+        ],
+        "strengths": [
+          "Strong evidence-driven debugging: you repeatedly verified live behavior instead of trusting assumptions, for example proving the cardinality fix from real /metrics output and proving the 500 error path with a temporary /boom route.",
+          "Strong observability reasoning: you distinguished between a metric existing and a metric telling the truth when you called out urls_total 0.0 as only a placeholder rather than a real business value."
+        ],
+        "growth_areas": [
+          "The business gauge is still placeholder-backed rather than database-backed; you explicitly noted that '0.0 is still just the placeholder value from URLS_TOTAL.set(0), not a real database-backed count yet.'",
+          "You needed substantial scaffolding to translate the metrics design into code-ready implementation steps, especially around route normalization and proof sequencing."
+        ],
+        "recommendation": "In Module 5, keep the same habit of proving each failure mode with a live check before trusting the symptom description, and make the first business metric fully truth-backed rather than placeholder-backed whenever possible.",
+        "public_evidence": [
+          {
+            "artifact": "API observability surface in apps/api/app/main.py and apps/api/app/logging_utils.py",
+            "student_action": "Implemented hybrid structured logging, Prometheus request metrics, a /metrics endpoint, and verified them with live requests plus a controlled 500 failure route.",
+            "technical_detail": "FastAPI middleware now emits structured request logs with request_id and records Prometheus counters and histograms labeled by method, normalized route, and status_code.",
+            "proof": "Live development log line included timestamp, level, message, service_name, and request_id; live /metrics output showed labeled http_requests_total and populated http_request_duration_seconds buckets; a temporary /boom route returned 500 and produced an ERROR log with request_id and stack trace.",
+            "ability": "Can instrument a service for production observability and verify the instrumentation from real runtime output.",
+            "reviewer_value": "Shows the student can add logging and metrics that are useful in an incident, not just write feature code.",
+            "confidence": "demonstrated"
+          },
+          {
+            "artifact": "Prometheus metric label strategy for dynamic API routes",
+            "student_action": "Diagnosed and fixed a cardinality bug by normalizing failure-path route labels instead of emitting raw dynamic paths.",
+            "technical_detail": "The failure metric path now uses the matched route template rather than raw_route, preventing one time series per dynamic ID.",
+            "proof": "After hitting multiple dynamic failing routes, /metrics showed one normalized route label: route=\"/teams/{team_id}/members\" instead of separate raw paths.",
+            "ability": "Can recognize and fix an observability scaling bug before it becomes a production incident.",
+            "reviewer_value": "Demonstrates mature metrics judgment, especially around label cardinality and operational cost.",
+            "confidence": "verified"
+          }
+        ],
+        "student_knowledge": {
+          "terminology_gaps": [],
+          "concepts_demonstrated": [
+            {
+              "concept": "structured logging",
+              "evidence": "You verified the live request log contained timestamp, level, message, service_name, and request_id and explained why hybrid formatting helps both local debugging and production aggregation."
+            },
+            {
+              "concept": "metric cardinality",
+              "evidence": "You explained that separate route labels like /links/a1 and /links/b2 would prove a cardinality blow-up, and you fixed the exception path to use normalized route templates."
+            },
+            {
+              "concept": "alert fatigue tradeoff",
+              "evidence": "You answered that too many alerts are worse because people start ignoring or muting them, which makes real incidents easier to miss."
+            }
+          ],
+          "teaching_approaches": [
+            {
+              "concept": "observability verification",
+              "approach": "example",
+              "detail": "Used concrete live checks for /health, /metrics, and a temporary failing /boom route instead of abstract explanation alone.",
+              "effective": true
+            },
+            {
+              "concept": "cardinality debugging",
+              "approach": "guided_discovery",
+              "detail": "Had the student predict what metric lines would look like if route labels exploded, then compare that mental model to the actual code and runtime output.",
+              "effective": true
+            }
+          ],
+          "effective_level": "intermediate",
+          "learning_style_signals": [
+            "Benefits from exact proof formats and command-level verification once the concept is understood.",
+            "Responds especially well to comparing observed runtime output against a predicted failure pattern."
+          ],
+          "confidence_level": "medium"
+        }
+      }
+    }
+  ]
+}

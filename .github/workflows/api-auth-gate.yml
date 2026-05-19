@@ -1,0 +1,39 @@
+name: API Auth Gate
+
+on:
+  pull_request:
+    paths:
+      - ".github/workflows/api-auth-gate.yml"
+      - "apps/api/**"
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/api-auth-gate.yml"
+      - "apps/api/**"
+
+jobs:
+  auth-regression:
+    runs-on: windows-latest
+
+    defaults:
+      run:
+        shell: pwsh
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Create repo virtual environment
+        run: python -m venv .venv
+
+      - name: Install API dependencies
+        run: .\.venv\Scripts\python.exe -m pip install -r apps/api/requirements.txt
+
+      - name: Run focused auth regression gate
+        run: powershell -ExecutionPolicy Bypass -File .\apps\api\scripts\run_auth_ci.ps1
