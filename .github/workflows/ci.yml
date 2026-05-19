@@ -10,6 +10,14 @@ on:
 jobs:
   auth-tests:
     runs-on: ubuntu-latest
+    env:
+      APP_ENV: development
+      PORT: "8000"
+      DATABASE_URL: sqlite:////tmp/auth-tests.db
+      JWT_SECRET: ci-test-secret-123
+      SERVICE_NAME: api-test
+      API_KEY_A: ci-test-key-a-123
+      API_KEY_B: ci-test-key-b-123
 
     defaults:
       run:
