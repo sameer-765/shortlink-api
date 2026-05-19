@@ -135,5 +135,4 @@ This repo uses GitHub Actions for two main checks:
 
 ## Notes
 
-- The API app has additional implementation notes in [apps/api/README.md](/D:/CAW%20sp/apps/api/README.md).
 - Local runtime settings are loaded through Pydantic Settings from `apps/api/.env`.

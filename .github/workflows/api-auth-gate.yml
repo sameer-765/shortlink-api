@@ -27,10 +27,13 @@ jobs:
     defaults:
       run:
         shell: pwsh
+        working-directory: repo
 
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
+        with:
+          path: repo
 
       - name: Set up Python
         uses: actions/setup-python@v5
